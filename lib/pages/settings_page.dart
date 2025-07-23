@@ -40,12 +40,7 @@ class _SettingsPageState extends State<SettingsPage> {
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildProfileSection(),
-              _buildAudioSection(),
-              _buildParentalControlsSection(),
-              _buildHelpAndSupportSection(),
-            ],
+            children: [_buildAudioSection(), _buildHelpAndSupportSection()],
           ),
         ),
       ),
@@ -129,26 +124,6 @@ class _SettingsPageState extends State<SettingsPage> {
               _musicVolume = value;
             });
             print('Music volume set to ${(value * 100).round()}%');
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildParentalControlsSection() {
-    return SettingsSection(
-      title: 'Parental Controls',
-      icon: Icons.security,
-      iconColor: Colors.green,
-      children: [
-        ParentalControls(
-          initialTimeLimit: _initialTimeLimit,
-          initialPinProtection: _initialPinProtection,
-          onSave: (timeLimit, pinProtection) {
-            // In a real app, we would save these values to persistent storage
-            print(
-              'Parental controls updated: timeLimit=$timeLimit, pinProtection=$pinProtection',
-            );
           },
         ),
       ],

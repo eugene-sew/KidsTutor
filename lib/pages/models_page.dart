@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/learning_model.dart';
 import '../widgets/model_card.dart';
+import 'model_detail_page.dart';
 
 class ModelsPage extends StatefulWidget {
   const ModelsPage({super.key});
@@ -283,15 +284,23 @@ class _ModelsPageState extends State<ModelsPage> {
   }
 
   void _handleModelTap(LearningModel model) {
-    // For now, just print the model name
+    // Navigate to the detail page for this model
     print('Selected model: ${model.name}');
     
-    // Show a snackbar to demonstrate the tap action
+    // Show loading indicator
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Opening ${model.name}'),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 1),
+      ),
+    );
+    
+    // Navigate to the detail page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ModelDetailPage(model: model),
       ),
     );
   }
