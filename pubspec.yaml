@@ -17,6 +17,10 @@ dependencies:
   camera: ^0.11.1
   permission_handler: ^12.0.1
   tflite_flutter: ^0.11.0
+  vector_math: ^2.1.4
+  shared_preferences: ^2.2.2
+  path_provider: ^2.1.2
+  model_viewer_plus: ^1.7.0
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +58,7 @@ flutter:
     - assets/alphabets_pics/X/
     - assets/alphabets_pics/Y/
     - assets/alphabets_pics/Z/
+    - assets/3d_models/
     - lib/ml_models/labels.txt
-    - lib/ml_models/labels_named.txt
+    - lib/ml_models/labels_named.txt 
     - lib/ml_models/model_unquant.tflite

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/settings/settings_section.dart';
 import '../widgets/settings/settings_item.dart';
 import '../widgets/settings/profile_settings.dart';
-import '../widgets/settings/parental_controls.dart';
+import '../ar/widgets/ar_settings_section.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -40,7 +40,11 @@ class _SettingsPageState extends State<SettingsPage> {
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [_buildAudioSection(), _buildHelpAndSupportSection()],
+            children: [
+              _buildAudioSection(),
+              const ARSettingsSection(),
+              _buildHelpAndSupportSection()
+            ],
           ),
         ),
       ),
@@ -202,17 +206,16 @@ class _SettingsPageState extends State<SettingsPage> {
   void _showComingSoonDialog(String feature) {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text('$feature Coming Soon'),
-            content: Text('The $feature feature is coming soon!'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: Text('$feature Coming Soon'),
+        content: Text('The $feature feature is coming soon!'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
           ),
+        ],
+      ),
     );
   }
 }
