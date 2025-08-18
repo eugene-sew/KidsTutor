@@ -21,6 +21,8 @@ dependencies:
   shared_preferences: ^2.2.2
   path_provider: ^2.1.2
   model_viewer_plus: ^1.7.0
+  kidverse_ar:
+    path: packages/kidverse_ar
 
 dev_dependencies:
   flutter_test:

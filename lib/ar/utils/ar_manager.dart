@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart';
+import 'package:kidverse_ar/kidverse_ar.dart';
 import 'ar_error_handler.dart';
 
 /// A simplified AR node class for our implementation with enhanced rendering properties
@@ -145,9 +146,10 @@ class ARManager {
   /// Check if AR is available on the device
   Future<bool> _checkARAvailability() async {
     try {
-      // This is a simplified check - in a real app, you would use
-      // platform-specific checks for ARCore/ARKit availability
-      return true;
+      // Query runtime capabilities from the kidverse_ar plugin
+      final caps = await KidverseAR.queryRuntimeCapabilities();
+      // Consider AR supported if plane detection (for anchors/hit-testing) is available
+      return caps.planeDetection;
     } catch (e) {
       await _errorHandler.handleException(
         e is Exception ? e : Exception(e.toString()),
