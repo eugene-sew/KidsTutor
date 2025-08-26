@@ -8,13 +8,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:image/image.dart' as img;
 
-// Import our custom TFLite helper
+// Import our TFLite helper
 import '../utils/tflite_helper.dart';
 
 // Import AR components
 import '../ar/models/ar_model.dart';
 import '../ar/utils/ar_error_handler.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
+// TTS Service
+import '../services/tts_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});
@@ -45,6 +48,8 @@ class _ExplorePageState extends State<ExplorePage> with WidgetsBindingObserver {
   ARModel? _selectedModel;
   final ARErrorHandler _errorHandler = ARErrorHandler();
   List<String> _available3DModels = []; // List of model asset paths
+  // Recognition control variables
+  bool _isRecognitionPaused = false; // When true, background recognition is paused
 
   @override
   void initState() {
@@ -345,6 +350,25 @@ class _ExplorePageState extends State<ExplorePage> with WidgetsBindingObserver {
               ),
             ),
           ),
+
+        // Manual recognition trigger (bottom-right) - shown in AR mode
+        if (_isARModeActive)
+          Positioned(
+            bottom: 24,
+            right: 24,
+            child: FloatingActionButton.extended(
+              heroTag: 'scan_fab',
+              onPressed: _triggerRecognition,
+              backgroundColor: _isRecognitionPaused
+                  ? Theme.of(context).colorScheme.secondary
+                  : Theme.of(context).colorScheme.primary,
+              icon: const Icon(Icons.document_scanner, color: Colors.white),
+              label: Text(
+                _isRecognitionPaused ? 'Scan' : 'Scanning...',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -520,7 +544,8 @@ class _ExplorePageState extends State<ExplorePage> with WidgetsBindingObserver {
         Timer.periodic(const Duration(milliseconds: 1200), (timer) {
       if (_cameraController != null &&
           _cameraController!.value.isInitialized &&
-          _isModelLoaded) {
+          _isModelLoaded &&
+          !_isRecognitionPaused) {
         // Add simple debounce for better performance
         if (!_isProcessingImage) {
           _predictImage();
@@ -592,6 +617,41 @@ class _ExplorePageState extends State<ExplorePage> with WidgetsBindingObserver {
         if (_isARModeActive) {
           print('🎯 AR MODE ACTIVE - Checking for 3D model...');
           _updateARModelFromRecognition();
+
+          // Pause background recognition if top result is confident enough
+          final double topConfidence =
+              (_recognitions.first['confidence'] ?? 0.0);
+          if (topConfidence >= 0.8) {
+            print('⏸️  Pausing recognition (confidence >= 0.8): $topConfidence');
+            _predictionTimer?.cancel();
+            if (mounted) {
+              setState(() {
+                _isRecognitionPaused = true;
+              });
+            }
+            // Optional user feedback
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Recognition paused. Tap Scan to rescan.'),
+                  behavior: SnackBarBehavior.floating,
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            }
+            // Speak child-friendly phrase, e.g., "A is for Apple" if enabled in settings
+            try {
+              final prefs = await SharedPreferences.getInstance();
+              final enabled = prefs.getBool('tts_auto_speak_on_pause') ?? true;
+              if (enabled) {
+                final String letter = _recognitions.first['label'] ?? '';
+                final String word = _labelMappings[letter] ?? letter;
+                if (letter.isNotEmpty && word.isNotEmpty) {
+                  TTSService().speak('$letter is for $word');
+                }
+              }
+            } catch (_) {}
+          }
         }
 
         debugPrint('Recognition results: $_recognitions');
@@ -796,6 +856,13 @@ class _ExplorePageState extends State<ExplorePage> with WidgetsBindingObserver {
     
     if (_isARModeActive) {
       print('🎯 AR Mode activated - will display 3D models when objects detected');
+      // Start AR prediction if not paused
+      if (_isRecognitionPaused) {
+        // Keep paused state; user can trigger with Scan
+        _predictionTimer?.cancel();
+      } else {
+        _startARModePrediction();
+      }
     } else {
       print('📷 Camera mode activated - showing recognition results only');
       if (_selectedModel != null) {
@@ -804,6 +871,11 @@ class _ExplorePageState extends State<ExplorePage> with WidgetsBindingObserver {
           _selectedModel = null;
         });
       }
+      // Resume background prediction in camera mode
+      setState(() {
+        _isRecognitionPaused = false;
+      });
+      _startImagePrediction();
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -815,13 +887,6 @@ class _ExplorePageState extends State<ExplorePage> with WidgetsBindingObserver {
         behavior: SnackBarBehavior.floating,
       ),
     );
-
-    if (!_isARModeActive) {
-      _startImagePrediction();
-    } else {
-      _predictionTimer?.cancel();
-      _startARModePrediction();
-    }
   }
 
   void _startARModePrediction() {
@@ -830,12 +895,25 @@ class _ExplorePageState extends State<ExplorePage> with WidgetsBindingObserver {
         Timer.periodic(const Duration(milliseconds: 2000), (timer) {
       if (_cameraController != null &&
           _cameraController!.value.isInitialized &&
-          _isModelLoaded) {
+          _isModelLoaded &&
+          !_isRecognitionPaused) {
         if (!_isProcessingImage) {
           _predictImage();
         }
       }
     });
+  }
+
+  // Manually trigger a single recognition while in AR mode
+  void _triggerRecognition() {
+    if (!_isARModeActive) return;
+    // Allow a single-shot prediction even if paused
+    if (!_isProcessingImage) {
+      setState(() {
+        // Keep paused state; just perform one prediction
+      });
+      _predictImage();
+    }
   }
 
   Future<void> _load3DModels() async {

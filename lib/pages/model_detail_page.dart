@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/learning_model.dart';
 import '../models/education_content.dart';
+import '../services/tts_service.dart';
 
 class ModelDetailPage extends StatefulWidget {
   final LearningModel model;
@@ -217,14 +218,17 @@ class _ModelDetailPageState extends State<ModelDetailPage> {
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton.icon(
-                        onPressed: () {
-                          // In a real app, this would play an audio pronunciation
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Playing: ${item.pronunciation}'),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
+                        onPressed: () async {
+                          // Speak the natural word with a friendly phrase
+                          // Example: "A is for Apple"
+                          final text = '${item.letter} is for ${item.word}';
+                          // Lazily initialize and speak
+                          try {
+                            // Avoid import conflicts by inline import at top of file
+                          } catch (_) {}
+                          // Use TTS service
+                          // We keep the import at file top for clarity
+                          await TTSService().speak(text);
                         },
                         icon: const Icon(Icons.volume_up),
                         label: const Text('Hear Pronunciation'),

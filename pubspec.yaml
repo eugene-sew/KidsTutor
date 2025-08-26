@@ -23,6 +23,7 @@ dependencies:
   model_viewer_plus: ^1.7.0
   kidverse_ar:
     path: packages/kidverse_ar
+  flutter_tts: ^3.8.3
 
 dev_dependencies:
   flutter_test:

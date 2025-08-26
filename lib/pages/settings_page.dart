@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../services/tts_service.dart';
 import '../widgets/settings/settings_section.dart';
 import '../widgets/settings/settings_item.dart';
 import '../widgets/settings/profile_settings.dart';
@@ -17,6 +19,11 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _musicEnabled = true;
   double _soundVolume = 0.7;
   double _musicVolume = 0.5;
+
+  // TTS settings
+  bool _autoSpeakOnPause = true;
+  double _ttsRate = 0.6;  // matches TTSService default
+  double _ttsPitch = 1.05; // matches TTSService default
 
   // Profile settings initial values
   final String _initialName = "Alex";
@@ -42,6 +49,8 @@ class _SettingsPageState extends State<SettingsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildAudioSection(),
+              const SizedBox(height: 16),
+              _buildTTSSection(),
               const ARSettingsSection(),
               _buildHelpAndSupportSection()
             ],
@@ -49,6 +58,87 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildTTSSection() {
+    return SettingsSection(
+      title: 'Pronunciation (TTS)',
+      icon: Icons.record_voice_over,
+      iconColor: Colors.green,
+      children: [
+        ToggleSettingsItem(
+          title: 'Auto-speak in AR',
+          subtitle: 'Speak when recognition pauses at high confidence',
+          icon: Icons.hearing,
+          value: _autoSpeakOnPause,
+          iconColor: Colors.green,
+          onChanged: (v) async {
+            setState(() { _autoSpeakOnPause = v; });
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setBool('tts_auto_speak_on_pause', v);
+          },
+        ),
+        const SizedBox(height: 8),
+        SliderSettingsItem(
+          title: 'Speech Rate',
+          icon: Icons.speed,
+          value: _ttsRate,
+          iconColor: Colors.green,
+          onChanged: (value) async {
+            final v = value.clamp(0.3, 1.0);
+            setState(() { _ttsRate = v; });
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setDouble('tts_rate', v);
+            await TTSService().setRate(v);
+          },
+        ),
+        const SizedBox(height: 8),
+        SliderSettingsItem(
+          title: 'Speech Pitch',
+          icon: Icons.tune,
+          value: _ttsPitch,
+          iconColor: Colors.green,
+          onChanged: (value) async {
+            final v = value.clamp(0.5, 2.0);
+            setState(() { _ttsPitch = v; });
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setDouble('tts_pitch', v);
+            await TTSService().setPitch(v);
+          },
+        ),
+        const SizedBox(height: 12),
+        SettingsItem(
+          title: 'Test Voice',
+          subtitle: 'Preview speech with current settings',
+          icon: Icons.volume_up,
+          iconColor: Colors.green,
+          trailing: const Icon(Icons.play_arrow),
+          onTap: () async {
+            // Speak a short preview using current TTS settings
+            await TTSService().stop();
+            await TTSService().speak('This is a test. A is for Apple.');
+          },
+        ),
+      ],
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTTSSettings();
+  }
+
+  Future<void> _loadTTSSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _autoSpeakOnPause = prefs.getBool('tts_auto_speak_on_pause') ?? true;
+      _ttsRate = prefs.getDouble('tts_rate') ?? 0.6;
+      _ttsPitch = prefs.getDouble('tts_pitch') ?? 1.05;
+    });
+    // apply to service
+    await TTSService().setRate(_ttsRate);
+    await TTSService().setPitch(_ttsPitch);
   }
 
   Widget _buildProfileSection() {
