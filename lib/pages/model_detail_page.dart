@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/learning_model.dart';
-import '../models/education_content.dart';
+import '../modules/learning_model.dart';
+import '../modules/education_content.dart';
+import '../utils/tts_service.dart';
 
 class ModelDetailPage extends StatefulWidget {
   final LearningModel model;
@@ -113,14 +114,16 @@ class _ModelDetailPageState extends State<ModelDetailPage> {
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16)),
                 child: Image.asset(
                   item.imagePath,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       color: Colors.grey[200],
-                      child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey[400]),
+                      child: Icon(Icons.image_not_supported,
+                          size: 50, color: Colors.grey[400]),
                     );
                   },
                 ),
@@ -204,7 +207,8 @@ class _ModelDetailPageState extends State<ModelDetailPage> {
                             return Container(
                               height: 200,
                               color: Colors.grey[200],
-                              child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey[400]),
+                              child: Icon(Icons.image_not_supported,
+                                  size: 50, color: Colors.grey[400]),
                             );
                           },
                         ),
@@ -216,24 +220,87 @@ class _ModelDetailPageState extends State<ModelDetailPage> {
                         item.funFact,
                       ),
                       const SizedBox(height: 24),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          // In a real app, this would play an audio pronunciation
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Playing: ${item.pronunciation}'),
-                              behavior: SnackBarBehavior.floating,
+                      // Enhanced pronunciation teaching for numbers
+                      if (widget.model.name == 'Numbers & Counting')
+                        Column(
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                try {
+                                  // First speak the number
+                                  await TtsService().speak(item.word);
+                                  await Future.delayed(const Duration(milliseconds: 500));
+                                  
+                                  // Then speak the pronunciation guide
+                                  await TtsService().speak('Let me say it slowly: ${item.pronunciation}');
+                                  await Future.delayed(const Duration(milliseconds: 500));
+                                  
+                                  // Finally speak the fun fact
+                                  await TtsService().speak(item.funFact);
+                                } catch (e) {
+                                  debugPrint('TTS speak error (numbers): $e');
+                                }
+                              },
+                              icon: const Icon(
+                                Icons.volume_up,
+                                color: Colors.white,
+                              ),
+                              label: const Text('Learn Pronunciation'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 24),
+                              ),
                             ),
-                          );
-                        },
-                        icon: const Icon(Icons.volume_up),
-                        label: const Text('Hear Pronunciation'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                            const SizedBox(height: 12),
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                try {
+                                  await TtsService().speak('${item.word}. ${item.pronunciation}');
+                                } catch (e) {
+                                  debugPrint('TTS speak error (quick): $e');
+                                }
+                              },
+                              icon: const Icon(
+                                Icons.repeat,
+                                color: Colors.white,
+                              ),
+                              label: const Text('Quick Practice'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 24),
+                              ),
+                            ),
+                          ],
+                        )
+                      else
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            try {
+                              final phrase = item.letter.isNotEmpty
+                                  ? '${item.letter} is for ${item.word}'
+                                  : item.word;
+                              await TtsService().speak(phrase);
+                            } catch (e) {
+                              debugPrint('TTS speak error (detail): $e');
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.volume_up,
+                            color: Colors.white,
+                          ),
+                          label: const Text('Hear Pronunciation'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 24),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),

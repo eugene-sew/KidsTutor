@@ -5,6 +5,7 @@ class ModelCard extends StatefulWidget {
   final String description;
   final IconData icon;
   final Function() onTap;
+  final VoidCallback? onSpeak;
 
   const ModelCard({
     super.key,
@@ -12,6 +13,7 @@ class ModelCard extends StatefulWidget {
     required this.description,
     required this.icon,
     required this.onTap,
+    this.onSpeak,
   });
 
   @override
@@ -140,9 +142,23 @@ class _ModelCardState extends State<ModelCard> with SingleTickerProviderStateMix
                       ],
                     ),
                   ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: Colors.grey[400],
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (widget.onSpeak != null)
+                        IconButton(
+                          tooltip: 'Hear ${widget.name}',
+                          icon: Icon(
+                            Icons.volume_up,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          onPressed: widget.onSpeak,
+                        ),
+                      Icon(
+                        Icons.chevron_right,
+                        color: Colors.grey[400],
+                      ),
+                    ],
                   ),
                 ],
               ),

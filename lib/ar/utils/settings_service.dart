@@ -18,6 +18,12 @@ class SettingsService {
   static const String _keyAREnabled = 'ar_enabled';
   static const String _keyARQuality = 'ar_quality';
   static const String _keyShowDebugInfo = 'show_debug_info';
+  static const String _keyTtsVoice = 'tts_voice';
+  static const String _keyTtsPollyVoice = 'tts_polly_voice';
+  static const String _keyTtsProvider = 'tts_provider';
+  static const String _keyTtsRate = 'tts_rate';
+  static const String _keyTtsPitch = 'tts_pitch';
+  static const String _keyTtsAutoSpeak = 'tts_auto_speak';
 
   /// Initialize the settings service
   Future<void> initialize() async {
@@ -63,6 +69,70 @@ class SettingsService {
     await _prefs!.setBool(_keyShowDebugInfo, value);
   }
 
+  // ===== TTS settings =====
+  String get ttsVoice {
+    _ensureInitialized();
+    return _prefs!.getString(_keyTtsVoice) ?? '';
+  }
+
+  Future<void> setTtsVoice(String voiceName) async {
+    _ensureInitialized();
+    await _prefs!.setString(_keyTtsVoice, voiceName);
+  }
+
+  double get ttsRate {
+    _ensureInitialized();
+    // Default sensible mid value per platform handled in TtsService
+    return _prefs!.getDouble(_keyTtsRate) ?? 0.8;
+  }
+
+  Future<void> setTtsRate(double rate) async {
+    _ensureInitialized();
+    await _prefs!.setDouble(_keyTtsRate, rate);
+  }
+
+  double get ttsPitch {
+    _ensureInitialized();
+    return _prefs!.getDouble(_keyTtsPitch) ?? 1.0;
+  }
+
+  Future<void> setTtsPitch(double pitch) async {
+    _ensureInitialized();
+    await _prefs!.setDouble(_keyTtsPitch, pitch);
+  }
+
+  bool get ttsAutoSpeak {
+    _ensureInitialized();
+    return _prefs!.getBool(_keyTtsAutoSpeak) ?? true;
+  }
+
+  Future<void> setTtsAutoSpeak(bool value) async {
+    _ensureInitialized();
+    await _prefs!.setBool(_keyTtsAutoSpeak, value);
+  }
+
+  // Polly voice settings
+  String get ttsPollyVoice {
+    _ensureInitialized();
+    return _prefs!.getString(_keyTtsPollyVoice) ?? 'Joanna';
+  }
+
+  Future<void> setTtsPollyVoice(String voiceId) async {
+    _ensureInitialized();
+    await _prefs!.setString(_keyTtsPollyVoice, voiceId);
+  }
+
+  // TTS Provider settings
+  String get ttsProvider {
+    _ensureInitialized();
+    return _prefs!.getString(_keyTtsProvider) ?? 'flutter';
+  }
+
+  Future<void> setTtsProvider(String provider) async {
+    _ensureInitialized();
+    await _prefs!.setString(_keyTtsProvider, provider);
+  }
+
   /// Ensure the service is initialized
   void _ensureInitialized() {
     if (_prefs == null) {
@@ -77,5 +147,11 @@ class SettingsService {
     await _prefs!.setBool(_keyAREnabled, true);
     await _prefs!.setInt(_keyARQuality, 1);
     await _prefs!.setBool(_keyShowDebugInfo, false);
+    await _prefs!.setString(_keyTtsVoice, '');
+    await _prefs!.setString(_keyTtsPollyVoice, 'Joanna');
+    await _prefs!.setString(_keyTtsProvider, 'flutter');
+    await _prefs!.setDouble(_keyTtsRate, 0.8);
+    await _prefs!.setDouble(_keyTtsPitch, 1.0);
+    await _prefs!.setBool(_keyTtsAutoSpeak, true);
   }
 }

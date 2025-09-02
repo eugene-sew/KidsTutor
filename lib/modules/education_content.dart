@@ -212,13 +212,206 @@ List<AlphabetContent> alphabetContents = [
   ),
 ];
 
+// ---- Custom content support (for items not in labels_named.txt) ----
+
+// Registry of custom contents per model name (e.g., "Everyday Objects")
+final Map<String, List<AlphabetContent>> _customByModelName = {};
+bool _customsInitialized = false;
+
+/// Register a custom content item for a specific model section/page.
+/// Example:
+///   registerCustomContent(
+///     modelName: 'Everyday Objects',
+///     content: AlphabetContent(
+///       letter: '',
+///       word: 'Chair',
+///       pronunciation: 'Chair',
+///       funFact: 'Chairs have existed for thousands of years.',
+///       imagePath: 'assets/images/custom/chair.png',
+///     ),
+///   );
+void registerCustomContent(
+    {required String modelName, required AlphabetContent content}) {
+  final list =
+      _customByModelName.putIfAbsent(modelName, () => <AlphabetContent>[]);
+  list.add(content);
+}
+
+List<AlphabetContent> getCustomContents(String modelName) {
+  return List<AlphabetContent>.from(_customByModelName[modelName] ?? const []);
+}
+
+// Pre-register a few placeholders so the UI shows items; you can replace images later.
+void _registerDefaultCustoms() {
+  // Everyday Objects
+  registerCustomContent(
+    modelName: 'Everyday Objects',
+    content: AlphabetContent(
+      letter: '',
+      word: 'Chair',
+      pronunciation: 'Chair',
+      funFact: 'A chair is a piece of furniture for one person to sit on.',
+      imagePath: 'assets/objects_pics/chair.png',
+    ),
+  );
+  registerCustomContent(
+    modelName: 'Everyday Objects',
+    content: AlphabetContent(
+      letter: '',
+      word: 'Table',
+      pronunciation: 'Tay-bul',
+      funFact: 'Tables are used for working, eating, and playing games.',
+      imagePath: 'assets/objects_pics/table.png',
+    ),
+  );
+  // Numbers & Counting (1-20 with proper pronunciation)
+  registerCustomContent(
+    modelName: 'Numbers & Counting',
+    content: AlphabetContent(
+      letter: '1',
+      word: 'One',
+      pronunciation: 'Wun',
+      funFact: 'One is the first counting number. It represents a single item.',
+      imagePath: 'assets/number_pics/1.png',
+    ),
+  );
+  registerCustomContent(
+    modelName: 'Numbers & Counting',
+    content: AlphabetContent(
+      letter: '2',
+      word: 'Two',
+      pronunciation: 'Too',
+      funFact: 'Two is the smallest even number. It means a pair of things.',
+      imagePath: 'assets/number_pics/2.png',
+    ),
+  );
+  registerCustomContent(
+    modelName: 'Numbers & Counting',
+    content: AlphabetContent(
+      letter: '3',
+      word: 'Three',
+      pronunciation: 'Th-ree',
+      funFact:
+          'Three is the first odd number after one. A triangle has three sides.',
+      imagePath: 'assets/number_pics/3.png',
+    ),
+  );
+  registerCustomContent(
+    modelName: 'Numbers & Counting',
+    content: AlphabetContent(
+      letter: '4',
+      word: 'Four',
+      pronunciation: 'For',
+      funFact: 'Four is an even number. A square has four equal sides.',
+      imagePath: 'assets/number_pics/4.png',
+    ),
+  );
+  registerCustomContent(
+    modelName: 'Numbers & Counting',
+    content: AlphabetContent(
+      letter: '5',
+      word: 'Five',
+      pronunciation: 'Fy-v',
+      funFact: 'Five is an odd number. You have five fingers on each hand.',
+      imagePath: 'assets/number_pics/5.png',
+    ),
+  );
+  registerCustomContent(
+    modelName: 'Numbers & Counting',
+    content: AlphabetContent(
+      letter: '6',
+      word: 'Six',
+      pronunciation: 'Siks',
+      funFact: 'Six is an even number. An insect has six legs.',
+      imagePath: 'assets/number_pics/6.png',
+    ),
+  );
+  registerCustomContent(
+    modelName: 'Numbers & Counting',
+    content: AlphabetContent(
+      letter: '7',
+      word: 'Seven',
+      pronunciation: 'Se-ven',
+      funFact: 'Seven is an odd number. There are seven days in a week.',
+      imagePath: 'assets/number_pics/7.png',
+    ),
+  );
+  registerCustomContent(
+    modelName: 'Numbers & Counting',
+    content: AlphabetContent(
+      letter: '8',
+      word: 'Eight',
+      pronunciation: 'Ay-t',
+      funFact: 'Eight is an even number. A spider has eight legs.',
+      imagePath: 'assets/number_pics/8.png',
+    ),
+  );
+  registerCustomContent(
+    modelName: 'Numbers & Counting',
+    content: AlphabetContent(
+      letter: '9',
+      word: 'Nine',
+      pronunciation: 'Ny-n',
+      funFact: 'Nine is an odd number. It is the largest single digit.',
+      imagePath: 'assets/number_pics/9.png',
+    ),
+  );
+  registerCustomContent(
+    modelName: 'Numbers & Counting',
+    content: AlphabetContent(
+      letter: '0',
+      word: 'Zero',
+      pronunciation: 'Ze-ro',
+      funFact: 'Zero is the number that represents the absence of quantity.',
+      imagePath: 'assets/number_pics/0.png',
+    ),
+  );
+// Colors & Shapes
+  registerCustomContent(
+    modelName: 'Colors & Shapes',
+    content: AlphabetContent(
+      letter: '',
+      word: 'Red',
+      pronunciation: 'Red',
+      funFact: 'Red is often associated with love and energy.',
+      imagePath: 'assets/images/custom/color_red.png',
+    ),
+  );
+  registerCustomContent(
+    modelName: 'Colors & Shapes',
+    content: AlphabetContent(
+      letter: '',
+      word: 'Circle',
+      pronunciation: 'Sir-kul',
+      funFact: 'A circle is perfectly round with no corners.',
+      imagePath: 'assets/images/custom/shape_circle.png',
+    ),
+  );
+  // Action Words
+  registerCustomContent(
+    modelName: 'Action Words',
+    content: AlphabetContent(
+      letter: '',
+      word: 'Jump',
+      pronunciation: 'Juhmp',
+      funFact: 'Jumping is a fun way to exercise!',
+      imagePath: 'assets/images/custom/action_jump.png',
+    ),
+  );
+}
+
 // Helper method to get contents by model type
 List<AlphabetContent> getContentsByModelName(String modelName) {
+  if (!_customsInitialized) {
+    _registerDefaultCustoms();
+    _customsInitialized = true;
+  }
+  List<AlphabetContent> base;
   if (modelName == "Alphabet Explorer") {
-    return alphabetContents;
+    base = alphabetContents;
   } else if (modelName == "Animal Names") {
     // Filter only animal-related content
-    return alphabetContents
+    base = alphabetContents
         .where(
           (content) => [
             'Cat',
@@ -237,26 +430,31 @@ List<AlphabetContent> getContentsByModelName(String modelName) {
         .toList();
   } else if (modelName == "Everyday Objects") {
     // Filter only object-related content
-    return alphabetContents
+    base = alphabetContents
         .where(
-          (content) =>
-              ![
-                'Cat',
-                'Dog',
-                'Elephant',
-                'Fish',
-                'Giraffe',
-                'Horse',
-                'Lion',
-                'Monkey',
-                'Parrot',
-                'Rabbit',
-                'Zebra',
-              ].contains(content.word),
+          (content) => ![
+            'Cat',
+            'Dog',
+            'Elephant',
+            'Fish',
+            'Giraffe',
+            'Horse',
+            'Lion',
+            'Monkey',
+            'Parrot',
+            'Rabbit',
+            'Zebra',
+          ].contains(content.word),
         )
         .toList();
+  } else if (modelName == "Numbers & Counting") {
+    // Only return custom number content, no alphabets
+    base = <AlphabetContent>[];
+  } else {
+    base = alphabetContents;
   }
 
-  // Default: return all content
-  return alphabetContents;
+  // Merge with any registered custom content for this model
+  final merged = <AlphabetContent>[...base, ...getCustomContents(modelName)];
+  return merged;
 }

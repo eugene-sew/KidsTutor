@@ -32,7 +32,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-
+/lib/config/env.dart
+/lib/config/tts_config.dart
 # Symbolication related
 app.*.symbols
 

@@ -1,12 +1,12 @@
 name: kids_tutor
 description: "An interactive learning app for children."
 
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -20,9 +20,11 @@ dependencies:
   vector_math: ^2.1.4
   shared_preferences: ^2.2.2
   path_provider: ^2.1.2
-  model_viewer_plus: ^1.7.0
-  kidverse_ar:
-    path: packages/kidverse_ar
+  arkit_plugin: ^1.2.0
+  flutter_tts: ^3.8.3
+  http: ^1.1.0
+  crypto: ^3.0.3
+  audioplayers: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -62,5 +64,17 @@ flutter:
     - assets/alphabets_pics/Z/
     - assets/3d_models/
     - lib/ml_models/labels.txt
-    - lib/ml_models/labels_named.txt 
+    - lib/ml_models/labels_named.txt
     - lib/ml_models/model_unquant.tflite
+    - assets/number_pics/0.png
+    - assets/number_pics/1.png
+    - assets/number_pics/2.png
+    - assets/number_pics/3.png
+    - assets/number_pics/4.png
+    - assets/number_pics/5.png
+    - assets/number_pics/6.png
+    - assets/number_pics/7.png
+    - assets/number_pics/8.png
+    - assets/number_pics/9.png
+    - assets/objects_pics/chair.png
+    - assets/objects_pics/table.png

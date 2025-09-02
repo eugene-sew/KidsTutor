@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import '../models/learning_model.dart';
+import '../modules/learning_model.dart';
 import '../widgets/model_card.dart';
 import 'model_detail_page.dart';
+import '../utils/tts_service.dart';
 
-class ModelsPage extends StatefulWidget {
-  const ModelsPage({super.key});
+class ModulesPage extends StatefulWidget {
+  const ModulesPage({super.key});
 
   @override
-  State<ModelsPage> createState() => _ModelsPageState();
+  State<ModulesPage> createState() => _ModulesPageState();
 }
 
-class _ModelsPageState extends State<ModelsPage> {
+class _ModulesPageState extends State<ModulesPage> {
   bool _isGridView = false;
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
@@ -43,7 +44,7 @@ class _ModelsPageState extends State<ModelsPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          'Learning Models',
+          'Learning Modules',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -174,6 +175,13 @@ class _ModelsPageState extends State<ModelsPage> {
           onTap: () {
             _handleModelTap(model);
           },
+          onSpeak: () async {
+            try {
+              await TtsService().speak(model.name);
+            } catch (e) {
+              debugPrint('TTS speak error (list): $e');
+            }
+          },
         );
       },
     );
@@ -243,6 +251,26 @@ class _ModelsPageState extends State<ModelsPage> {
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    tooltip: 'Hear ${model.name}',
+                    icon: Icon(
+                      Icons.volume_up,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    onPressed: () async {
+                      try {
+                        await TtsService().speak(model.name);
+                      } catch (e) {
+                        debugPrint('TTS speak error (grid): $e');
+                      }
+                    },
+                  ),
+                ],
               ),
             ],
           ),
