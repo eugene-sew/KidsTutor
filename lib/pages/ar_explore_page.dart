@@ -27,7 +27,7 @@ class _ARExplorePageState extends State<ARExplorePage> {
 
   final _models = {
     'Apple': 'assets/3d_models/apple.glb',
-    'Ball': 'assets/3d_models/default.glb',
+    'Ball': 'assets/3d_models/soccer.glb',
     'Cat': 'assets/3d_models/default.glb',
     'Dog': 'assets/3d_models/default.glb',
     'Elephant': 'assets/3d_models/elephant.glb',
@@ -177,6 +177,7 @@ class _ARExplorePageState extends State<ARExplorePage> {
     return completer.future;
   }
 
+  /// Recognize objects in the ARKit view
   Future<void> _recognize() async {
     if (_interpreter == null || _labels.isEmpty) return;
 
@@ -246,7 +247,7 @@ class _ARExplorePageState extends State<ARExplorePage> {
           });
 
           _placeModel(obj);
-
+//  double confirm threshold
           if (maxConfidence > 0.8) {
             print('🛑 High confidence - auto-pausing');
             _timer?.cancel();
@@ -307,7 +308,7 @@ class _ARExplorePageState extends State<ARExplorePage> {
       assetType: AssetType.flutterAsset,
       url: modelPath,
       scale: vector.Vector3(5, 5, 5), // Reverted to user's scale
-      position: position,
+      position: vector.Vector3(0, 0, -0.5),
     );
 
     arkitController.add(node);
