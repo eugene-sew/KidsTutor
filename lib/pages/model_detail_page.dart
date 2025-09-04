@@ -116,31 +116,68 @@ class _ModelDetailPageState extends State<ModelDetailPage> {
               child: ClipRRect(
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(16)),
-                child: Image.asset(
-                  item.imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[200],
-                      child: Icon(Icons.image_not_supported,
-                          size: 50, color: Colors.grey[400]),
-                    );
-                  },
-                ),
+                child: widget.model.name == 'Alphabet Explorer'
+                    ? Container(
+                        color: Colors.blue.withOpacity(0.1),
+                        child: Center(
+                          child: Text(
+                            '${item.letter.toUpperCase()}${item.letter.toLowerCase()}',
+                            style: TextStyle(
+                              fontSize: 48,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.blue[700],
+                            ),
+                          ),
+                        ),
+                      )
+                    : Image.asset(
+                        item.imagePath,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[200],
+                            child: Icon(Icons.image_not_supported,
+                                size: 50, color: Colors.grey[400]),
+                          );
+                        },
+                      ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
                 children: [
-                  Text(
-                    '${item.letter} - ${item.word}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  // Show different text for Alphabet Explorer vs other models
+                  if (widget.model.name == 'Alphabet Explorer')
+                    Column(
+                      children: [
+                        Text(
+                          '${item.letter.toUpperCase()}${item.letter.toLowerCase()}',
+                          style: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w900,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(
+                          'Letter ${item.letter}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    )
+                  else
+                    Text(
+                      '${item.letter} - ${item.word}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
                   const SizedBox(height: 4),
                   Text(
                     'Tap to learn more',
@@ -188,31 +225,99 @@ class _ModelDetailPageState extends State<ModelDetailPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const SizedBox(height: 16),
-                      Text(
-                        '${item.letter} is for ${item.word}',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                      // Show title based on model type
+                      if (widget.model.name == 'Alphabet Explorer')
+                        Text(
+                          'Letter ${item.letter}',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        )
+                      else
+                        Text(
+                          '${item.letter} is for ${item.word}',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
                       const SizedBox(height: 24),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
-                          item.imagePath,
+                      
+                      // Show large letters for Alphabet Explorer, images for others
+                      if (widget.model.name == 'Alphabet Explorer')
+                        Container(
                           height: 200,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              height: 200,
-                              color: Colors.grey[200],
-                              child: Icon(Icons.image_not_supported,
-                                  size: 50, color: Colors.grey[400]),
-                            );
-                          },
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Colors.blue.withOpacity(0.3),
+                              width: 2,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                item.letter.toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 120,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.blue[700],
+                                  height: 1.0,
+                                ),
+                              ),
+                              Text(
+                                item.letter.toLowerCase(),
+                                style: TextStyle(
+                                  fontSize: 80,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.blue[500],
+                                  height: 0.8,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      else if (item.imagePath.isNotEmpty)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            item.imagePath,
+                            height: 200,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                height: 200,
+                                color: Colors.grey[200],
+                                child: Icon(Icons.image_not_supported,
+                                    size: 50, color: Colors.grey[400]),
+                              );
+                            },
+                          ),
+                        )
+                      else
+                        Container(
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: Text(
+                              item.word,
+                              style: const TextStyle(
+                                fontSize: 48,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
                       const SizedBox(height: 24),
                       _buildInfoSection('Pronunciation', item.pronunciation),
                       _buildInfoSection(

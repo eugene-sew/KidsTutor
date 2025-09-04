@@ -16,7 +16,7 @@ class LearningModel {
 List<LearningModel> sampleModels = [
   const LearningModel(
     name: "Alphabet Explorer",
-    description: "Learn letters and their sounds.",
+    description: "Learn the alphabet A-Z and how to pronounce each letter.",
     icon: Icons.abc,
   ),
   const LearningModel(

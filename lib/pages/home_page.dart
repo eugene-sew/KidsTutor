@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'modules_page.dart';
 import 'settings_page.dart';
-import 'ar_explore_page.dart';
+import 'platform_camera_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _pages = [
-      const ARExplorePage(),
+      const PlatformCameraPage(),
       const ModulesPage(),
       const SettingsPage(),
     ];

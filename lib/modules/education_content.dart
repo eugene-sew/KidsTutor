@@ -243,11 +243,54 @@ List<AlphabetContent> getCustomContents(String modelName) {
 
 // Pre-register a few placeholders so the UI shows items; you can replace images later.
 void _registerDefaultCustoms() {
+  // Pure Alphabet Learning (A-Z)
+  final alphabetData = [
+    {'letter': 'A', 'pronunciation': 'Ay', 'funFact': 'A is the first letter of the alphabet. It makes the sound "ah" in apple.'},
+    {'letter': 'B', 'pronunciation': 'Bee', 'funFact': 'B makes the "buh" sound. It\'s the second letter of the alphabet.'},
+    {'letter': 'C', 'pronunciation': 'See', 'funFact': 'C can make a "kuh" sound like in cat, or an "sss" sound like in city.'},
+    {'letter': 'D', 'pronunciation': 'Dee', 'funFact': 'D makes the "duh" sound. It\'s shaped like a half circle.'},
+    {'letter': 'E', 'pronunciation': 'Ee', 'funFact': 'E is the most commonly used letter in English. It makes the "eh" sound.'},
+    {'letter': 'F', 'pronunciation': 'Eff', 'funFact': 'F makes the "fff" sound. It has two horizontal lines.'},
+    {'letter': 'G', 'pronunciation': 'Jee', 'funFact': 'G can make a "guh" sound like in go, or a "juh" sound like in giraffe.'},
+    {'letter': 'H', 'pronunciation': 'Aych', 'funFact': 'H makes the "huh" sound. It looks like a ladder.'},
+    {'letter': 'I', 'pronunciation': 'Eye', 'funFact': 'I makes the "ih" sound. Don\'t forget the dot on top!'},
+    {'letter': 'J', 'pronunciation': 'Jay', 'funFact': 'J makes the "juh" sound. It has a hook at the bottom.'},
+    {'letter': 'K', 'pronunciation': 'Kay', 'funFact': 'K makes the "kuh" sound, just like C sometimes does.'},
+    {'letter': 'L', 'pronunciation': 'Ell', 'funFact': 'L makes the "lll" sound. It\'s shaped like a corner.'},
+    {'letter': 'M', 'pronunciation': 'Em', 'funFact': 'M makes the "mmm" sound. It has two humps like a camel.'},
+    {'letter': 'N', 'pronunciation': 'En', 'funFact': 'N makes the "nnn" sound. It\'s like M but with one hump.'},
+    {'letter': 'O', 'pronunciation': 'Oh', 'funFact': 'O makes the "oh" sound. It\'s perfectly round like a circle.'},
+    {'letter': 'P', 'pronunciation': 'Pee', 'funFact': 'P makes the "puh" sound. It has one bump at the top.'},
+    {'letter': 'Q', 'pronunciation': 'Kyoo', 'funFact': 'Q almost always comes with U. Together they make the "kw" sound.'},
+    {'letter': 'R', 'pronunciation': 'Arr', 'funFact': 'R makes the "rrr" sound. Pirates say "Arrr!"'},
+    {'letter': 'S', 'pronunciation': 'Ess', 'funFact': 'S makes the "sss" sound like a snake. It\'s curvy like a snake too!'},
+    {'letter': 'T', 'pronunciation': 'Tee', 'funFact': 'T makes the "tuh" sound. It looks like a cross or plus sign.'},
+    {'letter': 'U', 'pronunciation': 'You', 'funFact': 'U makes the "uh" sound. It\'s shaped like a horseshoe.'},
+    {'letter': 'V', 'pronunciation': 'Vee', 'funFact': 'V makes the "vvv" sound. It points down like an arrow.'},
+    {'letter': 'W', 'pronunciation': 'Double-you', 'funFact': 'W makes the "wuh" sound. It looks like two V\'s put together.'},
+    {'letter': 'X', 'pronunciation': 'Ex', 'funFact': 'X makes the "ks" sound. It marks the spot on treasure maps!'},
+    {'letter': 'Y', 'pronunciation': 'Why', 'funFact': 'Y can make the "yuh" sound or act like a vowel making "ih" or "eye" sounds.'},
+    {'letter': 'Z', 'pronunciation': 'Zee', 'funFact': 'Z makes the "zzz" sound like a buzzing bee. It\'s the last letter!'},
+  ];
+
+  for (final data in alphabetData) {
+    registerCustomContent(
+      modelName: 'Alphabet Explorer',
+      content: AlphabetContent(
+        letter: data['letter']!,
+        word: data['letter']!, // Just the letter itself
+        pronunciation: data['pronunciation']!,
+        funFact: data['funFact']!,
+        imagePath: '', // No image path needed for text-based letters
+      ),
+    );
+  }
+
   // Everyday Objects
   registerCustomContent(
     modelName: 'Everyday Objects',
     content: AlphabetContent(
-      letter: '',
+      letter: 'C',
       word: 'Chair',
       pronunciation: 'Chair',
       funFact: 'A chair is a piece of furniture for one person to sit on.',
@@ -257,7 +300,7 @@ void _registerDefaultCustoms() {
   registerCustomContent(
     modelName: 'Everyday Objects',
     content: AlphabetContent(
-      letter: '',
+      letter: 'T',
       word: 'Table',
       pronunciation: 'Tay-bul',
       funFact: 'Tables are used for working, eating, and playing games.',
@@ -408,7 +451,8 @@ List<AlphabetContent> getContentsByModelName(String modelName) {
   }
   List<AlphabetContent> base;
   if (modelName == "Alphabet Explorer") {
-    base = alphabetContents;
+    // Only return pure alphabet content, no object associations
+    base = <AlphabetContent>[];
   } else if (modelName == "Animal Names") {
     // Filter only animal-related content
     base = alphabetContents
